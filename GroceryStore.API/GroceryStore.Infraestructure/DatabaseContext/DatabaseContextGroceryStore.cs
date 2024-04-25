@@ -10,13 +10,14 @@ namespace GroceryStore.Infraestructure.DatabaseContext;
 /// <param name="options"></param>
 public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGroceryStore> options) : DbContext(options)
 {
+	#region Admin Methods
 	#region Product Get Querys
 	/// <summary>
 	/// Query para buscar un producto con su stock
 	/// </summary>
 	static readonly Func<DatabaseContextGroceryStore, Guid, Task<ProductEntity?>> GetProductAndStockByIdQuery =
 	EF.CompileAsyncQuery((DatabaseContextGroceryStore context, Guid id) =>
-		 context.Products.Include(e => e.Stock).Where(e => e.ProductId.Equals(id)).AsNoTracking().FirstOrDefault());
+		 context.Products.AsNoTracking().Include(e => e.Stock).Where(e => e.ProductId.Equals(id)).FirstOrDefault());
 
 	/// <summary>
 	/// Obtiene el producto y su stock por id
@@ -31,7 +32,7 @@ public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGrocery
 	/// </summary>
 	static readonly Func<DatabaseContextGroceryStore, IAsyncEnumerable<ProductEntity>> GetProductsAndStockQuery =
 	EF.CompileAsyncQuery((DatabaseContextGroceryStore context) =>
-		context.Products.Include(e => e.Stock).AsNoTracking());
+		context.Products.AsNoTracking().Include(e => e.Stock));
 
 	/// <summary>
 	/// Obtiene todos los productos y su stock asociado
@@ -40,16 +41,37 @@ public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGrocery
 	public IAsyncEnumerable<ProductEntity> GetProductsAndStockAsync()
 		=> GetProductsAndStockQuery(this);
 	#endregion Product Get Querys
+	#endregion Admin Methods
+
+	#region User Methods
+	#region Product Get Querys
+	/// <summary>
+	/// Query para buscar los productos disponibles
+	/// </summary>
+	static readonly Func<DatabaseContextGroceryStore, IAsyncEnumerable<ProductEntity>> GetAvailableProductsQuery =
+		EF.CompileAsyncQuery((DatabaseContextGroceryStore context) =>
+			context.Products.AsNoTracking().Include(e => e.Stock).Where(e => e.Stock.IsAvailable));
+
+	/// <summary>
+	/// Obtiene los productos disponibles
+	/// </summary>
+	/// <returns>ProductEntity</returns>
+	public IAsyncEnumerable<ProductEntity> GetAvailableProducts()
+		=> GetAvailableProductsQuery(this);
+	#endregion Product Get Querys
+	#endregion User Methods
 
 	#region Entities
 	/// <summary>
 	/// Entidad de productos
 	/// </summary>
-	public DbSet<ProductEntity> Products { get; set; }
+	public DbSet<ProductEntity> Products
+	{ get; set; }
 
 	/// <summary>
 	/// Entidad de stock/inventario
 	/// </summary>
-	public DbSet<StockEntity> Stocks { get; set; }
+	public DbSet<StockEntity> Stocks
+	{ get; set; }
 	#endregion Entities
 }

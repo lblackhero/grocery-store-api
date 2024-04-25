@@ -1,10 +1,12 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GroceryStore.Domain.Entities.Identity;
 
 /// <summary>
 /// Entidad que representa la tabla de usuarios (identity)
 /// </summary>
+[Table("AspNetUsers", Schema = "dbo")]
 public class UserEntity : BaseEntityUsers
 {
 	#pragma warning disable
@@ -14,15 +16,23 @@ public class UserEntity : BaseEntityUsers
 	}
 	#pragma warning enable
 
-	public UserEntity(string names, string contact)
+	public UserEntity(string fullName, string? contact)
 	{
-		Names = names;
+		FullName = fullName;
 		Contact = contact;
 	}
 
-	public string Names
-	{ get; private set; }
+	/// <summary>
+	/// Nombre del usuario
+	/// </summary>
+	[Column("Names")]
+	public string FullName
+	{ get; set; }
 
-	public string Contact
-	{ get; private set; }
+	/// <summary>
+	/// Contacto del usuario
+	/// </summary>
+	[Column("Contact")]
+	public string? Contact
+	{ get; set; }
 }

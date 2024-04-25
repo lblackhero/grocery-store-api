@@ -3,6 +3,9 @@ using GroceryStore.Common.Models.Grocery.Product;
 
 namespace GroceryStore.Application.Interfaces.Grocery.Products;
 
+/// <summary>
+/// Define los metodos para el manejo de productos
+/// </summary>
 public interface IProductRepository
 {
 	#region Get Methods

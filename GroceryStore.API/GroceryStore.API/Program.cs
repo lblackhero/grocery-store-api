@@ -1,9 +1,14 @@
+using GroceryStore.Application.Interfaces.Grocery.Order;
 using GroceryStore.Application.Interfaces.Grocery.Products;
+using GroceryStore.Application.Interfaces.User;
 using GroceryStore.Common.Profiler.Grocery.ProductProfiler;
 using GroceryStore.Common.Profiler.Grocery.StockProfiler;
 using GroceryStore.Domain.Entities.Identity;
 using GroceryStore.Infraestructure.DatabaseContext;
+using GroceryStore.Logic.Repositories.Grocery.Orders;
 using GroceryStore.Logic.Repositories.Grocery.Products;
+using GroceryStore.Logic.Repositories.User;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,11 +28,14 @@ builder.Services.AddDbContext<DatabaseContextGroceryStore>(options => options.Us
 builder.Services.AddDbContext<DatabaseContextUser>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GroceryStoreConnectionString")));
 
 //Servicios de identity
-builder.Services.AddIdentityApiEndpoints<UserEntity>()
+builder.Services.AddIdentityApiEndpoints<UserEntity>(options => options.User.RequireUniqueEmail = true)
+		.AddRoles<IdentityRole>()
 		.AddEntityFrameworkStores<DatabaseContextUser>();
 
 //Adicion de servicios
 builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
+builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
 
 //Mapeo de entidades
 builder.Services.AddAutoMapper(typeof(ProductProfiler).Assembly);
@@ -42,7 +50,6 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<UserEntity>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

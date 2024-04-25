@@ -1,5 +1,8 @@
 ﻿namespace GroceryStore.Common.Functionalities;
 
+/// <summary>
+/// Define los metodos para funcionalidades generales
+/// </summary>
 public interface IFunctionalities
 {
 	/// <summary>

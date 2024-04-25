@@ -1,5 +1,6 @@
 ﻿using GroceryStore.Domain.Entities.Common;
 using GroceryStore.Domain.Entities.Grocery.Stock;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -32,7 +33,7 @@ public class ProductEntity : BaseEntity
 	[Key]
 	[Column("ProductId")]
 	public Guid ProductId 
-    { get; set; }
+    { get; private set; }
 
 	/// <summary>
 	/// Nombre del producto
@@ -52,6 +53,7 @@ public class ProductEntity : BaseEntity
 	/// Precio del producto
 	/// </summary>
 	[Column("Price")]
+	[Precision(18, 2)]
     public decimal Price
     { get; private set; }
 

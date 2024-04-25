@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace GroceryStore.Common.Models.Grocery.Stock;
 
@@ -20,7 +22,9 @@ public class StockModelToUpdate
         Quantity = quantity;
     }
 
-    public int? Quantity
+	[DefaultValue(0)]
+	[Range(0, int.MaxValue, ErrorMessage = "The field {0} must be greater or equal to {1}")]
+	public int? Quantity
     { get; set; }
 
     [JsonIgnore]

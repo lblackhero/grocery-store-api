@@ -1,4 +1,5 @@
 ﻿using GroceryStore.Common.Models.Grocery.Stock;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace GroceryStore.Common.Models.Grocery.Product;
@@ -22,19 +23,38 @@ public class ProductModelToUpdate
         Price = price;
     }
 
+    /// <summary>
+    /// Id
+    /// </summary>
     [Required]
     public Guid ProductId
     { get; set; }
 
-    public string? Description
+	/// <summary>
+	/// Descripcion
+	/// </summary>
+	[MaxLength(250, ErrorMessage = "The field {0} must be equal or less than {1} characters")]
+	public string? Description
     { get; set; }
 
-    public string? Name
+	/// <summary>
+	/// Nombre
+	/// </summary>
+	[MaxLength(250, ErrorMessage = "The field {0} must be equal or less than {1} characters")]
+	public string? Name
     { get; set; }
 
-    public decimal? Price
+	/// <summary>
+	/// Precio
+	/// </summary>
+	[DefaultValue(10)]
+	[Range(1, double.MaxValue, ErrorMessage = "The field {0} must be greater or equal to {1}")]
+	public decimal? Price
     { get; set; }
 
+    /// <summary>
+    /// Stock / inventario
+    /// </summary>
     public StockModelToUpdate? Stock
     { get; set; }
 }
