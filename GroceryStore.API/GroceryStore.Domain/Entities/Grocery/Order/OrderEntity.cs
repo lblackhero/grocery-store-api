@@ -1,4 +1,5 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -30,7 +31,7 @@ public class OrderEntity : BaseEntity
 	[Key]
     [Column("OrderId")]
     public Guid OrderId 
-    { get; private set; }
+    { get; private set; } = new Guid();
 
     /// <summary>
     /// Id del usuario
@@ -43,12 +44,21 @@ public class OrderEntity : BaseEntity
     /// Numero de orden
     /// </summary>
     [Column("OrderNumber")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderNumber 
     { get; private set; }
 
     /// <summary>
-    /// Detalle de la orden (tabla dependiente)
+    /// Representa la sumatoria del valor de todos los productos ordenados
+    /// </summary>
+    [Column("TotalToPay")]
+    [Precision(18, 2)]
+    public decimal TotalToPay 
+    { get; private set; }
+
+    /// <summary>
+    /// Detalle de la orden (tabla dependiente) - propiedad de navegacion
     /// </summary>
     public ICollection<OrderDetailEntity> Details
-    { get; private set; } = new List<OrderDetailEntity>();
+    { get; } = new List<OrderDetailEntity>();
 }

@@ -36,7 +36,7 @@ public class BaseEntityUsers : IdentityUser
 	/// <summary>
 	/// Obtiene la hora del servidor 
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>DateTime</returns>
 	private static DateTime GetTimeColombia()
 		=> TimeZoneInfo.ConvertTime(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time")).DateTime;
 

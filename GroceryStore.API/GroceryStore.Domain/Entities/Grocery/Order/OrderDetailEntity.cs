@@ -31,10 +31,9 @@ public class OrderDetailEntity : BaseEntity
 	/// <summary>
 	/// Id de la orden
 	/// </summary>
-	[Key, ForeignKey("OrderId")]
 	[Column("OrderId")]
-	public Guid OrderId 
-    { get; private set; }
+	public Guid OrderId
+	{ get; private set; } = new Guid();
 
 	/// <summary>
 	/// Id del producto
@@ -70,6 +69,6 @@ public class OrderDetailEntity : BaseEntity
 	/// Propiedad de navegacion a la tabla padre (no mapeada en el json)
 	/// </summary>
 	[JsonIgnore]
-	public OrderEntity Order 
+	public OrderEntity Order
 	{ get; private set; } = null!;
 }

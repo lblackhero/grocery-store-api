@@ -1,12 +1,16 @@
 using GroceryStore.Application.Interfaces.Grocery.Order;
 using GroceryStore.Application.Interfaces.Grocery.Products;
+using GroceryStore.Application.Interfaces.Grocery.Stock;
 using GroceryStore.Application.Interfaces.User;
+using GroceryStore.Common.Functionalities;
+using GroceryStore.Common.Profiler.Grocery.OrderProfiler;
 using GroceryStore.Common.Profiler.Grocery.ProductProfiler;
 using GroceryStore.Common.Profiler.Grocery.StockProfiler;
 using GroceryStore.Domain.Entities.Identity;
 using GroceryStore.Infraestructure.DatabaseContext;
 using GroceryStore.Logic.Repositories.Grocery.Orders;
 using GroceryStore.Logic.Repositories.Grocery.Products;
+using GroceryStore.Logic.Repositories.Grocery.Stock;
 using GroceryStore.Logic.Repositories.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,10 +40,14 @@ builder.Services.AddIdentityApiEndpoints<UserEntity>(options => options.User.Req
 builder.Services.AddScoped(typeof(IProductRepository), typeof(ProductRepository));
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
+builder.Services.AddScoped(typeof(IStockRepository), typeof(StockRepository));
+builder.Services.AddScoped(typeof(IFunctionalities), typeof(Functionalities));
 
 //Mapeo de entidades
 builder.Services.AddAutoMapper(typeof(ProductProfiler).Assembly);
 builder.Services.AddAutoMapper(typeof(StockProfiler).Assembly);
+builder.Services.AddAutoMapper(typeof(OrderProfiler).Assembly);
+builder.Services.AddAutoMapper(typeof(OrderDetailProfiler).Assembly);
 
 var app = builder.Build();
 

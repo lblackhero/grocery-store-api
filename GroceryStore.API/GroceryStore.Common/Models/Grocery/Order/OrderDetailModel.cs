@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GroceryStore.Common.Models.Common.BaseEntity;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace GroceryStore.Common.Models.Grocery.Order;
 
 /// <summary>
-/// Modelo que representa el detalle de una orden o
-/// la cantidad de productos a ordenar
+/// Modelo de la entidad detalle de la orden
 /// </summary>
-public class OrderDetailModel
+public class OrderDetailModel : BaseModel
 {
     #pragma warning disable
 	public OrderDetailModel()
@@ -16,9 +17,8 @@ public class OrderDetailModel
     }
 	#pragma warning enable
 
-	public OrderDetailModel(Guid orderId, Guid productId, decimal unitPrice, int quantity, decimal total)
+	public OrderDetailModel(Guid productId, decimal unitPrice, int quantity, decimal total)
 	{
-		OrderId = orderId;
 		ProductId = productId;
 		UnitPrice = unitPrice;
 		Quantity = quantity;
@@ -26,16 +26,9 @@ public class OrderDetailModel
 	}
 
 	/// <summary>
-	/// Id de la orden
-	/// </summary>
-	[JsonIgnore]
-    public Guid OrderId 
-    { get; set; }
-
-	/// <summary>
 	/// Id del producto
 	/// </summary>
-    [Required]
+	[Required]
     public Guid ProductId 
     { get; set; }
 
@@ -47,10 +40,12 @@ public class OrderDetailModel
 	{ get; set; }
 
 	/// <summary>
-	/// Valor total por producto
+	/// Cantidad solicitada del producto
 	/// </summary>
 	[Required]
-    public int Quantity 
+	[DefaultValue(1)]
+	[Range(1, int.MaxValue, ErrorMessage = "The field {0} must be greater or equal to {1}")]
+	public int Quantity 
     { get; set; }
 
 	/// <summary>

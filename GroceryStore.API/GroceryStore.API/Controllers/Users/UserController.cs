@@ -1,5 +1,5 @@
 ﻿using GroceryStore.Application.Interfaces.User;
-using GroceryStore.Common.Models;
+using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

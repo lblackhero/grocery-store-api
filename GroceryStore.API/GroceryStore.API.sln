@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroceryStore.Logic", "Groce
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroceryStore.Common", "GroceryStore.Common\GroceryStore.Common.csproj", "{9C0CB203-79B4-40C3-9E42-F6B136E6D101}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroceryStore.SMTP", "GroceryStore.SMTP\GroceryStore.SMTP.csproj", "{D5DA48AA-162F-4EBE-8008-4F3974F09FEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GroceryStore.AzureCommunicationEmail", "GroceryStore.SMTP\GroceryStore.AzureCommunicationEmail.csproj", "{D5DA48AA-162F-4EBE-8008-4F3974F09FEB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

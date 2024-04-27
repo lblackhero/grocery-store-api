@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GroceryStore.Application.Interfaces.Grocery.Products;
-using GroceryStore.Common.Models;
+using GroceryStore.Common.Models.Common.GlobalResponse;
+using GroceryStore.Common.Models.Grocery.Order;
 using GroceryStore.Common.Models.Grocery.Product;
 using GroceryStore.Common.Statics;
 using GroceryStore.Domain.Entities.Grocery.Products;
@@ -15,6 +16,7 @@ public class ProductRepository(DatabaseContextGroceryStore databaseContextGrocer
 	private readonly IMapper Mapper = mapper;
 
 	#region Get Methods
+	#region Admin Methods
 	/// <summary>
 	/// Obtiene un producto y su stock por id
 	/// </summary>
@@ -47,6 +49,27 @@ public class ProductRepository(DatabaseContextGroceryStore databaseContextGrocer
 
 		return new(HttpStatusCode.OK, products, GenericResponse.GenericOkMessage);
 	}
+	#endregion Admin Methods
+
+	#region Normal User Methods
+	/// <summary>
+	/// Se encarga de obtener los productos disponibles (con stock)
+	/// </summary>
+	/// <returns>ReturnResponses</returns>
+	public async Task<ReturnResponses> GetAvailableProducts()
+	{
+		IAsyncEnumerable<ProductEntity> availableProducts = DatabaseContextGroceryStore.GetAvailableProducts();
+		List<AvailableProductModel> products = [];
+
+		await foreach (ProductEntity product in availableProducts.ConfigureAwait(false))
+			products.Add(new(product.ProductId, product.Name, product.Description, product.Price, product.Stock.Quantity));
+
+		if (products.Count <= 0)
+			return new(HttpStatusCode.NotFound, null, GenericResponse.GenericNotFoundMessage);
+
+		return new(HttpStatusCode.OK, products, GenericResponse.GenericOkMessage);
+	}
+	#endregion Normal User Methods
 	#endregion Get Methods
 
 	#region Post Methods

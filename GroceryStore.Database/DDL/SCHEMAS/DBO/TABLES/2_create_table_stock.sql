@@ -1,6 +1,6 @@
-﻿IF OBJECT_ID('dbo.Stock', 'U') IS NOT NULL
+﻿IF OBJECT_ID('[dbo].[Stock]', 'U') IS NOT NULL
 BEGIN
-	DROP TABLE dbo.Stock
+	DROP TABLE [dbo].[Stock]
 END
 GO
 

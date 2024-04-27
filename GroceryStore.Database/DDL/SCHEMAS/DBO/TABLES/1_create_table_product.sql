@@ -1,6 +1,6 @@
-﻿IF OBJECT_ID('dbo.Product', 'U') IS NOT NULL
+﻿IF OBJECT_ID('[dbo].[Product]', 'U') IS NOT NULL
 BEGIN
-	DROP TABLE dbo.Product
+	DROP TABLE [dbo].[Product]
 END
 GO
 

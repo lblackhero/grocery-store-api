@@ -26,6 +26,7 @@ public class LoginUserModel
 	[Required]
 	[DataType(DataType.EmailAddress)]
 	[EmailAddress]
+	[MaxLength(256)]
 	public string UserName 
 	{ get; set; }
 

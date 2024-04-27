@@ -1,4 +1,4 @@
-﻿using GroceryStore.Common.Models;
+﻿using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Product;
 
 namespace GroceryStore.Application.Interfaces.Grocery.Products;
@@ -9,6 +9,7 @@ namespace GroceryStore.Application.Interfaces.Grocery.Products;
 public interface IProductRepository
 {
 	#region Get Methods
+	#region Admin Methods
 	/// <summary>
 	/// Obtiene un producto y su stock por id
 	/// </summary>
@@ -21,6 +22,15 @@ public interface IProductRepository
 	/// </summary>
 	/// <returns>ReturnResponses</returns>
 	Task<ReturnResponses> GetProductsAndStockAsync();
+	#endregion Admin Methods
+
+	#region Normal User Methods
+	/// <summary>
+	/// Se encarga de obtener los productos disponibles (con stock)
+	/// </summary>
+	/// <returns>ReturnResponses</returns>
+	Task<ReturnResponses> GetAvailableProducts();
+	#endregion Normal User Methods
 	#endregion Get Methods
 
 	#region Post Methods

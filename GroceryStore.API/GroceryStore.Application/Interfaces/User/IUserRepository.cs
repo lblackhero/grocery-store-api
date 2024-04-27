@@ -1,5 +1,5 @@
 ﻿using GroceryStore.Common.Models.User;
-using GroceryStore.Common.Models;
+using GroceryStore.Common.Models.Common.GlobalResponse;
 
 namespace GroceryStore.Application.Interfaces.User;
 

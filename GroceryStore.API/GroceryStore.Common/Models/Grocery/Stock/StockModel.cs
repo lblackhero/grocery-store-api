@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using GroceryStore.Common.Models.Common.BaseEntity;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -7,7 +8,7 @@ namespace GroceryStore.Common.Models.Grocery.Stock;
 /// <summary>
 /// Modelo de la entidad stock
 /// </summary>
-public class StockModel
+public class StockModel : BaseModel
 {
     #pragma warning disable
     public StockModel()
@@ -16,7 +17,7 @@ public class StockModel
     }
     #pragma warning enable
 
-    public StockModel(Guid productId, int quantity)
+    public StockModel(Guid productId, int quantity, DateTime creationDate) : base(creationDate)
     {
         ProductId = productId;
         Quantity = quantity;
