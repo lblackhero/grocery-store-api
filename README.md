@@ -17,6 +17,7 @@ Esta API te permitira gestionar un catalogo de alimentos como usuario administra
 ## 💻 Tecnologías utilizadas
 
 - .NET
+- Entity Framework Core
 - .ASP .NET Identity
 - C#
 - Azure Services - Azure Email Services, Azure SQL Database & Azure App Services
