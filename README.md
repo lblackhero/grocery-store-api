@@ -4,7 +4,7 @@
 
 Esta API te permitira gestionar un catalogo de alimentos como usuario administrador, y como usuario estándar te permitirá realizar ordenes sobre el catalogo que gestione el usuario administrador.
 
-[Diseño de la base de datos](https://dbdiagram.io/d/grocery-store-api-database-6620805b03593b6b61486402) · [Prueba la API](https://grocery-store-api.azurewebsites.net/swagger/index.html)
+[Diseño de la base de datos](https://dbdiagram.io/d/grocery-store-api-database-6620805b03593b6b61486402) · [Prueba la API](https://grocery-store-api.azurewebsites.net/swagger/index.html) · [Crea los objetos de base de datos](https://github.com/lblackhero/grocery-store-api/blob/main/GroceryStore.Database/DDL/SCHEMAS/DBO/TABLES/create_all_tables_grocery_api.sql)
   
 </div>
 
