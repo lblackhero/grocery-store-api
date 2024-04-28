@@ -22,6 +22,7 @@
     <ProjectReference Include="..\GroceryStore.Application\GroceryStore.Application.csproj" />
     <ProjectReference Include="..\GroceryStore.Common\GroceryStore.Common.csproj" />
     <ProjectReference Include="..\GroceryStore.Infraestructure\GroceryStore.Infraestructure.csproj" />
+    <ProjectReference Include="..\GroceryStore.SMTP\GroceryStore.AzureCommunicationEmail.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,16 @@
+using GroceryStore.Application.Interfaces.Email;
 using GroceryStore.Application.Interfaces.Grocery.Order;
 using GroceryStore.Application.Interfaces.Grocery.Products;
 using GroceryStore.Application.Interfaces.Grocery.Stock;
 using GroceryStore.Application.Interfaces.User;
+using GroceryStore.AzureCommunicationEmail.AzureEmailService;
 using GroceryStore.Common.Functionalities;
 using GroceryStore.Common.Profiler.Grocery.OrderProfiler;
 using GroceryStore.Common.Profiler.Grocery.ProductProfiler;
 using GroceryStore.Common.Profiler.Grocery.StockProfiler;
 using GroceryStore.Domain.Entities.Identity;
 using GroceryStore.Infraestructure.DatabaseContext;
+using GroceryStore.Logic.Repositories.Email;
 using GroceryStore.Logic.Repositories.Grocery.Orders;
 using GroceryStore.Logic.Repositories.Grocery.Products;
 using GroceryStore.Logic.Repositories.Grocery.Stock;
@@ -42,12 +45,16 @@ builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
 builder.Services.AddScoped(typeof(IStockRepository), typeof(StockRepository));
 builder.Services.AddScoped(typeof(IFunctionalities), typeof(Functionalities));
+builder.Services.AddScoped(typeof(IAzureEmailService), typeof(AzureEmailService));
+builder.Services.AddScoped(typeof(IEmailRepository), typeof(EmailRepository));
 
 //Mapeo de entidades
 builder.Services.AddAutoMapper(typeof(ProductProfiler).Assembly);
 builder.Services.AddAutoMapper(typeof(StockProfiler).Assembly);
 builder.Services.AddAutoMapper(typeof(OrderProfiler).Assembly);
 builder.Services.AddAutoMapper(typeof(OrderDetailProfiler).Assembly);
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 

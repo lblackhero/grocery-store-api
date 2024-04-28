@@ -1,7 +1,8 @@
 ﻿using GroceryStore.Application.Interfaces.User;
 using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.User;
-using GroceryStore.Common.Statics;
+using GroceryStore.Common.Statics.Common;
+using GroceryStore.Common.Statics.User;
 using GroceryStore.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.Net;

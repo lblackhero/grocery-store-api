@@ -3,7 +3,7 @@ using GroceryStore.Application.Interfaces.Grocery.Products;
 using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Order;
 using GroceryStore.Common.Models.Grocery.Product;
-using GroceryStore.Common.Statics;
+using GroceryStore.Common.Statics.Common;
 using GroceryStore.Domain.Entities.Grocery.Products;
 using GroceryStore.Infraestructure.DatabaseContext;
 using System.Net;

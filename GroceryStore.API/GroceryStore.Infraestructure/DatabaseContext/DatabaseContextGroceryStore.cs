@@ -1,6 +1,7 @@
 ﻿using GroceryStore.Domain.Entities.Grocery.Order;
 using GroceryStore.Domain.Entities.Grocery.Products;
 using GroceryStore.Domain.Entities.Grocery.Stock;
+using GroceryStore.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GroceryStore.Infraestructure.DatabaseContext;
@@ -11,23 +12,6 @@ namespace GroceryStore.Infraestructure.DatabaseContext;
 /// <param name="options"></param>
 public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGroceryStore> options) : DbContext(options)
 {
-	#region Entities mapping
-	/// <summary>
-	/// Mapea las entidades
-	/// </summary>
-	/// <param name="modelBuilder">Entidad</param>
-	protected override void OnModelCreating(ModelBuilder modelBuilder)
-	{
-		modelBuilder.Entity<OrderDetailEntity>().HasKey(e => new { e.OrderId, e.ProductId });
-
-		modelBuilder.Entity<OrderEntity>()
-			.HasMany(e => e.Details)
-			.WithOne(e => e.Order)
-			.HasForeignKey(e => e.OrderId)
-			.IsRequired();
-	}
-	#endregion Entities Mapping
-
 	#region Admin Methods
 	#region Product Get Queries
 	/// <summary>
@@ -77,6 +61,52 @@ public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGrocery
 	public IAsyncEnumerable<ProductEntity> GetAvailableProducts()
 		=> GetAvailableProductsQuery(this);
 	#endregion Product Get Queries
+
+	#region Order Get Queries
+	/// <summary>
+	/// Query para obtener el resumen de una orden
+	/// </summary>
+	static readonly Func<DatabaseContextGroceryStore, string, Guid, Task<UserEntity>> GetOrderSummaryQuery =
+		EF.CompileAsyncQuery((DatabaseContextGroceryStore context, string userId, Guid orderId) =>
+			(from u in context.Users.AsNoTracking()
+			 join o in context.Orders on u.Id equals o.UserId
+			 where u.Id.Equals(userId) && o.OrderId.Equals(orderId)
+			 select new UserEntity
+			 {
+				 Email = u.Email,
+				 FullName = u.FullName,
+				 Contact = u.Contact,
+				 Orders = new List<OrderEntity>() { new(orderId, userId, o.OrderNumber, o.TotalToPay, o.CreationDate) },
+			 }).First());
+
+	/// <summary>
+	/// Obtiene el resumen de una orden
+	/// </summary>
+	/// <param name="userNameIdentifier">Id del usuario</param>
+	/// <param name="orderId">Id de la orden</param>
+	/// <returns>UserEntity?</returns>
+	public async Task<UserEntity> GetOrderSummaryByUserAndOrderId(string userNameIdentifier, Guid orderId)
+		=> await GetOrderSummaryQuery(this, userNameIdentifier, orderId);
+
+	/// <summary>
+	/// Query para obtener los detalles de una orden
+	/// </summary>
+	static readonly Func<DatabaseContextGroceryStore, Guid, IAsyncEnumerable<ProductEntity>> GetOrderDetailsSummaryQuery =
+		EF.CompileAsyncQuery((DatabaseContextGroceryStore context, Guid orderId) =>
+			from p in context.Products.AsNoTracking()
+			join o in context.OrderDetails on p.ProductId equals o.ProductId
+			where o.OrderId == orderId
+			select new ProductEntity(p.ProductId, p.Name, p.Description, p.Price,
+				   new List<OrderDetailEntity>() { new(orderId, p.ProductId, p.Price, o.Quantity, o.Total) }));
+
+	/// <summary>
+	/// Obtiene los detalles de una orden
+	/// </summary>
+	/// <param name="orderId"></param>
+	/// <returns>OrderDetailEntity</returns>
+	public IAsyncEnumerable<ProductEntity> GetOrderDetailsSummaryByOrderId(Guid orderId)
+		=> GetOrderDetailsSummaryQuery(this, orderId);
+	#endregion Order Get Queries
 	#endregion Normal User Methods
 
 	#region Entities
@@ -102,6 +132,12 @@ public class DatabaseContextGroceryStore(DbContextOptions<DatabaseContextGrocery
 	/// Entidad de detalles de la orden
 	/// </summary>
 	public DbSet<OrderDetailEntity> OrderDetails
+	{ get; set; }
+
+	/// <summary>
+	/// Entidad del usuario
+	/// </summary>
+	public DbSet<UserEntity> Users
 	{ get; set; }
 	#endregion Entities
 }

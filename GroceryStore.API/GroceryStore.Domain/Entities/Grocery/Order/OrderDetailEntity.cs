@@ -1,6 +1,6 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using GroceryStore.Domain.Entities.Grocery.Products;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -10,6 +10,7 @@ namespace GroceryStore.Domain.Entities.Grocery.Order;
 /// Entidad que representa la tabla de detalle de ordenes
 /// </summary>
 [Table("OrderDetail", Schema = "dbo")]
+[PrimaryKey(nameof(OrderId), nameof(ProductId))]
 public class OrderDetailEntity : BaseEntity
 {
 	#pragma warning disable
@@ -70,5 +71,12 @@ public class OrderDetailEntity : BaseEntity
 	/// </summary>
 	[JsonIgnore]
 	public OrderEntity Order
+	{ get; private set; } = null!;
+
+	/// <summary>
+	/// Propiedad de navegacion a la tabla padre (no mapeada en el json)
+	/// </summary>
+	[JsonIgnore]
+	public ProductEntity Product
 	{ get; private set; } = null!;
 }

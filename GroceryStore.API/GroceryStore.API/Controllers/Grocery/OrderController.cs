@@ -1,8 +1,12 @@
-﻿using GroceryStore.Application.Interfaces.Grocery.Order;
+﻿using GroceryStore.Application.Interfaces.Email;
+using GroceryStore.Application.Interfaces.Grocery.Order;
 using GroceryStore.Application.Interfaces.Grocery.Products;
+using GroceryStore.Common.DTOS.Email;
+using GroceryStore.Common.DTOS.Grocery.Order;
 using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Order;
-using GroceryStore.Common.Statics;
+using GroceryStore.Common.Statics.Common;
+using GroceryStore.Common.Statics.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -14,7 +18,7 @@ namespace GroceryStore.Presentation.Controllers.Grocery;
 [ApiController]
 public class OrderController : ControllerBase
 {
-	private static readonly int MaxOrderLength = 100;
+	static readonly int MaxOrderLength = 100;
 
 	#region Get Methods
 	/// <summary>
@@ -26,6 +30,7 @@ public class OrderController : ControllerBase
 	[HttpGet]
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status404NotFound)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 	public async Task<ActionResult<ReturnResponses>> GetAvailableProducts([FromServices] IProductRepository productRepository)
@@ -51,8 +56,9 @@ public class OrderController : ControllerBase
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(typeof(ReturnResponses), StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
-	public async Task<ActionResult<ReturnResponses>> BuyProducts([FromBody] List<OrderDetailModel> userOrder, [FromServices] IOrderRepository orderRepository)
+	public async Task<ActionResult<ReturnResponses>> BuyProducts([FromBody] List<OrderDetailModel> userOrder, [FromServices] IOrderRepository orderRepository, [FromServices] IEmailRepository emailRepository)
 	{
 		Claim? userClaimNameIdentifier = User.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -66,7 +72,16 @@ public class OrderController : ControllerBase
 		if (processingOrderTask.StatusCode != HttpStatusCode.OK)
 			return BadRequest(processingOrderTask);
 
-		return Ok(processingOrderTask);
+		Guid orderId = Guid.TryParse(processingOrderTask.ResponseData?.ToString(), out Guid result) ? result : Guid.Empty;
+		OrderSummaryDto orderSummary = await orderRepository.GetOrderSummary(orderId, userClaimNameIdentifier.Value);
+
+		EmailDto email = new(orderSummary.Email ?? string.Empty, $"Gracias por tu pedido {orderSummary.FullName}", "OrderConfirmation", orderSummary);
+		ReturnResponses emailSendTask = await emailRepository.ManageEmailSend(email);
+
+		if (emailSendTask.StatusCode != HttpStatusCode.OK) 
+			return BadRequest(emailSendTask);
+
+		return Ok(new ReturnResponses(HttpStatusCode.OK, orderSummary, GenericResponse.GenericOkMessage));
 	}
 	#endregion Post Methods
 }

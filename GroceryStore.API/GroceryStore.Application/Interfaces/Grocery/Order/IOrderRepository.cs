@@ -1,4 +1,5 @@
-﻿using GroceryStore.Common.Models.Common.GlobalResponse;
+﻿using GroceryStore.Common.DTOS.Grocery.Order;
+using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Order;
 
 namespace GroceryStore.Application.Interfaces.Grocery.Order;
@@ -25,4 +26,14 @@ public interface IOrderRepository
 	/// <returns>ReturnResponses</returns>
 	Task<ReturnResponses> CreateOrderAsync(OrderModel order);
 	#endregion Post Methods
+
+	#region Get Methods
+	/// <summary>
+	/// Se encarga de crear el resumen de una orden
+	/// </summary>
+	/// <param name="orderId">Id de la orden</param>
+	/// <param name="userNameIdentifier">Id del usuario</param>
+	/// <returns>OrderSummaryModel</returns>
+	Task<OrderSummaryDto> GetOrderSummary(Guid orderId, string userNameIdentifier);
+	#endregion Get Methods
 }

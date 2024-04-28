@@ -3,7 +3,7 @@ using GroceryStore.Application.Interfaces.Grocery.Stock;
 using GroceryStore.Common.Functionalities;
 using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Stock;
-using GroceryStore.Common.Statics;
+using GroceryStore.Common.Statics.Common;
 using GroceryStore.Domain.Entities.Grocery.Stock;
 using GroceryStore.Infraestructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;

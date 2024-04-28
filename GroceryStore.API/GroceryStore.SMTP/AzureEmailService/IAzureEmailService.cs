@@ -5,6 +5,7 @@
 /// </summary>
 public interface IAzureEmailService
 {
+	#region Post Methods
 	/// <summary>
 	/// Se encarga de enviar un email 
 	/// </summary>
@@ -12,12 +13,12 @@ public interface IAzureEmailService
 	/// <param name="subject">Asunto del mensaje</param>
 	/// <param name="htmlContent">Contenido HTML</param>
 	/// <returns>bool</returns>
-	Task<bool> SendEmail(string recipientAddress, string subject, string htmlContent);
+	Task<bool> SendEmailAsync(string recipientAddress, string subject, string htmlContent);
+	#endregion Post Methods
 
 	#region Utility Methods
 	/// <summary>
-	/// Se encarga de convertir contenido html
-	/// en string
+	/// Se encarga de convertir contenido html en string
 	/// </summary>
 	/// <param name="viewName">Nombre de la vista</param>
 	/// <param name="model">Modelo de datos</param>

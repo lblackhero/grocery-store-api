@@ -1,7 +1,9 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using GroceryStore.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace GroceryStore.Domain.Entities.Grocery.Order;
 
@@ -18,11 +20,12 @@ public class OrderEntity : BaseEntity
     }
     #pragma warning enable
 
-	public OrderEntity(Guid orderId, Guid userId, int orderNumber)
+	public OrderEntity(Guid orderId, string userId, int orderNumber, decimal totalToPay, DateTime creationDate) : base(creationDate, null)
 	{
 		OrderId = orderId;
 		UserId = userId;
 		OrderNumber = orderNumber;
+        TotalToPay = totalToPay;
 	}
 
     /// <summary>
@@ -36,8 +39,9 @@ public class OrderEntity : BaseEntity
     /// <summary>
     /// Id del usuario
     /// </summary>
+    [ForeignKey("UserId")]
     [Column("UserId")]
-    public Guid UserId 
+    public string UserId 
     { get; private set; }
 
     /// <summary>
@@ -55,6 +59,13 @@ public class OrderEntity : BaseEntity
     [Precision(18, 2)]
     public decimal TotalToPay 
     { get; private set; }
+
+    /// <summary>
+    /// Propiedad de navegacion a la tabla padre (no mapeada en el json)
+    /// </summary>
+    [JsonIgnore]
+    public UserEntity User
+    { get; private set; } = null!;
 
     /// <summary>
     /// Detalle de la orden (tabla dependiente) - propiedad de navegacion

@@ -1,4 +1,5 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using GroceryStore.Domain.Entities.Grocery.Order;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GroceryStore.Domain.Entities.Identity;
@@ -35,4 +36,10 @@ public class UserEntity : BaseEntityUsers
 	[Column("Contact")]
 	public string? Contact
 	{ get; set; }
+
+	/// <summary>
+	/// Tabla dependiente (propiedad de navegacion)
+	/// </summary>
+	public ICollection<OrderEntity> Orders
+	{ get; set; } = new List<OrderEntity>();
 }

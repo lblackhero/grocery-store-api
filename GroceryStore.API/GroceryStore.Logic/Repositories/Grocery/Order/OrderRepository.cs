@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
 using GroceryStore.Application.Interfaces.Grocery.Order;
 using GroceryStore.Application.Interfaces.Grocery.Stock;
+using GroceryStore.Common.DTOS.Grocery.Order;
 using GroceryStore.Common.Functionalities;
 using GroceryStore.Common.Models.Common.GlobalResponse;
 using GroceryStore.Common.Models.Grocery.Order;
 using GroceryStore.Common.Models.Grocery.Stock;
-using GroceryStore.Common.Statics;
+using GroceryStore.Common.Statics.Common;
 using GroceryStore.Domain.Entities.Grocery.Order;
 using GroceryStore.Domain.Entities.Grocery.Products;
+using GroceryStore.Domain.Entities.Identity;
 using GroceryStore.Infraestructure.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -55,7 +57,9 @@ public class OrderRepository(DatabaseContextGroceryStore databaseContextGroceryS
 		if (orderProcessingTask.StatusCode != HttpStatusCode.OK)
 			return orderProcessingTask;
 
-		return new(HttpStatusCode.OK, GenericResponse.GenericOkMessage);
+		object? orderId = orderProcessingTask.ResponseData?.GetType()?.GetProperty("ResponseData")?.GetValue(orderProcessingTask.ResponseData);
+
+		return new(HttpStatusCode.OK, orderId, GenericResponse.GenericOkMessage);
 	}
 
 	/// <summary>
@@ -69,17 +73,53 @@ public class OrderRepository(DatabaseContextGroceryStore databaseContextGroceryS
 
 		try
 		{
-			await DatabaseContextGroceryStore.AddAsync(orderEntity);
+			var orderResult = await DatabaseContextGroceryStore.AddAsync(orderEntity);
 			await DatabaseContextGroceryStore.SaveChangesAsync(true);
+
+			return new(HttpStatusCode.OK, orderResult.Entity.OrderId, ResponseMessage: GenericResponse.GenericOkMessage);
 		}
 		catch
 		{
 			return new(HttpStatusCode.BadRequest, ResponseMessage: "An error ocurred while trying to create the order");
 		}
-
-		return new(HttpStatusCode.OK, ResponseMessage: GenericResponse.GenericOkMessage);
 	}
 	#endregion Post Methods
+
+	#region Get Methods
+	/// <summary>
+	/// Se encarga de crear el resumen de una orden
+	/// </summary>
+	/// <param name="orderId">Id de la orden</param>
+	/// <param name="userNameIdentifier">Id del usuario</param>
+	/// <returns>OrderSummaryModel</returns>
+	public async Task<OrderSummaryDto> GetOrderSummary(Guid orderId, string userNameIdentifier)
+	{
+		if (orderId.Equals(Guid.Empty))
+			return new();
+
+		UserEntity orderSummary = await DatabaseContextGroceryStore.GetOrderSummaryByUserAndOrderId(userNameIdentifier, orderId);
+
+		OrderSummaryDto summary = new(
+			orderSummary.Email,
+			orderSummary.FullName,
+			orderSummary.Contact,
+			orderSummary.Orders.ElementAt(0).OrderNumber,
+			orderSummary.Orders.ElementAt(0).TotalToPay,
+			orderSummary.Orders.ElementAt(0).CreationDate
+		);
+
+		IAsyncEnumerable<ProductEntity> orderDetailSummary = DatabaseContextGroceryStore.GetOrderDetailsSummaryByOrderId(orderId);
+
+		await foreach (ProductEntity product in orderDetailSummary.ConfigureAwait(false))
+			summary.Details.Add(new OrderDetailDto(product.Name,
+												   product.Description,
+												   product.Price,
+												   product.OrderDetails.ElementAt(0).Quantity,
+												   product.OrderDetails.ElementAt(0).Total));
+
+		return summary;
+	}
+	#endregion Get Methods
 
 	#region Utility Methods
 	/// <summary>
@@ -132,21 +172,23 @@ public class OrderRepository(DatabaseContextGroceryStore databaseContextGroceryS
 
 		try
 		{
-			Task<ReturnResponses>? orderTask = ManageOrderAsync(orderProcessing, userNameIdentifier);
-			Task<ReturnResponses>? stockTask = ManageStockAsync(orderProcessing);
+			ReturnResponses orderTask = await ManageOrderAsync(orderProcessing, userNameIdentifier);
+			ReturnResponses stockTask = await ManageStockAsync(orderProcessing);
 
-			ReturnResponses[] orderAndStockResult = await Task.WhenAll(orderTask, stockTask);
-			ReturnResponses? wereErrorsInProcess = Array.Find(orderAndStockResult, e => e.StatusCode != HttpStatusCode.OK);
-
-			if (wereErrorsInProcess is not null)
+			if (orderTask.StatusCode != HttpStatusCode.OK)
 			{
 				await transaction.RollbackAsync();
-				return wereErrorsInProcess;
+				return orderTask;
+			}
+			else if (stockTask.StatusCode != HttpStatusCode.OK)
+			{
+				await transaction.RollbackAsync();
+				return stockTask;
 			}
 
 			await transaction.CommitAsync();
 
-			return new(HttpStatusCode.OK, ResponseMessage: GenericResponse.GenericOkMessage);
+			return new(HttpStatusCode.OK, orderTask, GenericResponse.GenericOkMessage);
 		}
 		catch
 		{

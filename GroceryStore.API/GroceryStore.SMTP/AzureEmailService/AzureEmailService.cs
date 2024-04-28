@@ -11,13 +11,17 @@ using Microsoft.Extensions.Configuration;
 
 namespace GroceryStore.AzureCommunicationEmail.AzureEmailService;
 
-public class AzureEmailService (IConfiguration configuration, IServiceProvider serviceProvider, IRazorViewEngine razorViewEngine, ITempDataProvider tempDataProvider)
+public class AzureEmailService(IConfiguration configuration,
+							   IServiceProvider serviceProvider,
+							   IRazorViewEngine razorViewEngine,
+							   ITempDataProvider tempDataProvider) : IAzureEmailService
 {
 	private readonly IConfiguration Configuration = configuration;
 	private readonly IServiceProvider ServiceProvider = serviceProvider;
 	private readonly IRazorViewEngine RazorViewEngine = razorViewEngine;
 	private readonly ITempDataProvider TempDataProvider = tempDataProvider;
 
+	#region Post Methods
 	/// <summary>
 	/// Se encarga de enviar un email 
 	/// </summary>
@@ -25,7 +29,7 @@ public class AzureEmailService (IConfiguration configuration, IServiceProvider s
 	/// <param name="subject">Asunto del mensaje</param>
 	/// <param name="htmlContent">Contenido HTML</param>
 	/// <returns>bool</returns>
-	public async Task<bool> SendEmail(string recipientAddress, string subject, string htmlContent)
+	public async Task<bool> SendEmailAsync(string recipientAddress, string subject, string htmlContent)
 	{
 		var emailClient = new EmailClient(Configuration.GetConnectionString("AzureEmailServiceConnectionString"));
 
@@ -40,11 +44,11 @@ public class AzureEmailService (IConfiguration configuration, IServiceProvider s
 
 		return result.Value.Status == EmailSendStatus.Succeeded;
 	}
+	#endregion Post Methods
 
 	#region Utility Methods
 	/// <summary>
-	/// Se encarga de convertir contenido html
-	/// en string
+	/// Se encarga de convertir contenido html en string
 	/// </summary>
 	/// <param name="viewName">Nombre de la vista</param>
 	/// <param name="model">Modelo de datos</param>
@@ -79,5 +83,4 @@ public class AzureEmailService (IConfiguration configuration, IServiceProvider s
 		return sw.ToString();
 	}
 	#endregion Utility Methods
-
 }

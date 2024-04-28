@@ -1,8 +1,10 @@
 ﻿using GroceryStore.Domain.Entities.Common;
+using GroceryStore.Domain.Entities.Grocery.Order;
 using GroceryStore.Domain.Entities.Grocery.Stock;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace GroceryStore.Domain.Entities.Grocery.Products;
 
@@ -19,12 +21,13 @@ public class ProductEntity : BaseEntity
     }
 	#pragma warning enable
 
-	public ProductEntity(Guid productId, string name, string? description, decimal price)
+	public ProductEntity(Guid productId, string name, string? description, decimal price, List<OrderDetailEntity> orderDetails)
 	{
 		ProductId = productId;
 		Name = name;
 		Description = description;
 		Price = price;
+		OrderDetails = orderDetails;
 	}
 
 	/// <summary>
@@ -62,6 +65,13 @@ public class ProductEntity : BaseEntity
 	/// </summary>
 	public StockEntity Stock 
 	{ get; private set; }
+
+	/// <summary>
+	/// Detalle de la orden (tabla dependiente) - propiedad de navegacion
+	/// </summary>
+	[JsonIgnore]
+	public ICollection<OrderDetailEntity> OrderDetails
+	{ get; private set; } = new List<OrderDetailEntity>();
 
 	/// <summary>
 	/// Actualiza los campos del producto
