@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/GroceryStore.API/GroceryStore.API/appsettings.QA.json
+/GroceryStore.API/GroceryStore.API/Properties/ServiceDependencies/grocery-store-api - Web Deploy/profile.arm.json
